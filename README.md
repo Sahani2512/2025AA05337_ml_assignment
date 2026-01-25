@@ -1,37 +1,34 @@
-a. Problem Statement - The objective of this project is to predict the presence of heart disease in patients using machine learning classification techniques. Multiple supervised learning models are trained and evaluated on a publicly available heart disease dataset. The models are compared using standard evaluation metrics, and a Streamlit web application is developed to allow interactive dataset upload, model selection, and visualization of results.
-b. Dataset Description - The Heart Disease dataset was obtained from a public repository (UCI / Kaggle).
+# Heart Disease Prediction using Machine Learning
+
+## a. Problem Statement
+The objective of this project is to predict the presence of heart disease in patients using machine learning classification techniques. Multiple supervised learning models are trained and evaluated on a publicly available heart disease dataset. The models are compared using standard evaluation metrics, and a Streamlit web application is developed to allow interactive dataset upload, model selection, and visualization of results.
+
+## b. Dataset Description
+The Heart Disease dataset was obtained from a public repository (UCI / Kaggle).
+
 Dataset Characteristics:
-Number of instances: 1025
-Number of features: 13 input features + 1 target variable
-Type: Binary classification (0 = No Heart Disease, 1 = Heart Disease)
+- Number of instances: 1025  
+- Number of features: 13 input features + 1 target  
+- Type: Binary classification (0 = No Heart Disease, 1 = Heart Disease)
+
 Features:
-age – Age of patient
-sex – Gender (0 = Female, 1 = Male)
-cp – Chest pain type
-trestbps – Resting blood pressure
-chol – Serum cholesterol
-fbs – Fasting blood sugar
-restecg – Resting ECG results
-thalach – Maximum heart rate achieved
-exang – Exercise induced angina
-oldpeak – ST depression
-slope – Slope of peak exercise ST segment
-ca – Number of major vessels
-thal – Thalassemia
-target – Heart disease presence (0/1)
-c. Models Used and Evaluation Metrics - The following six machine learning models were implemented:
-Logistic Regression
-Decision Tree Classifier
-K-Nearest Neighbors (KNN)
-Naive Bayes (Gaussian)
-Random Forest (Ensemble)
-XGBoost (Ensemble)
-Each model was evaluated using:
-Accuracy
-AUC Score
-Precision
-Recall
-F1 Score
+- age – Age of patient  
+- sex – Gender (0 = Female, 1 = Male)  
+- cp – Chest pain type  
+- trestbps – Resting blood pressure  
+- chol – Serum cholesterol  
+- fbs – Fasting blood sugar  
+- restecg – Resting ECG  
+- thalach – Max heart rate  
+- exang – Exercise induced angina  
+- oldpeak – ST depression  
+- slope – Slope of ST segment  
+- ca – Number of major vessels  
+- thal – Thalassemia  
+- target – Heart disease (0/1)
+
+## c. Models Used and Evaluation Metrics
+### Comparison Table
 Matthews Correlation Coefficient (MCC)
 | Model               | Accuracy | AUC    | Precision | Recall | F1     | MCC    |
 | ------------------- | -------- | ------ | --------- | ------ | ------ | ------ |
@@ -41,6 +38,8 @@ Matthews Correlation Coefficient (MCC)
 | Naive Bayes         | 0.8488   | 0.9060 | 0.8475    | 0.8850 | 0.8658 | 0.6937 |
 | Random Forest       | 0.9512   | 0.9902 | 0.9558    | 0.9558 | 0.9558 | 0.9014 |
 | XGBoost             | 0.9415   | 0.9834 | 0.9316    | 0.9646 | 0.9478 | 0.8819 |
+
+## Model Observations
 | ML Model                 | Observation                                                                                                   |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | Logistic Regression      | Provides stable performance with good recall and balanced metrics, suitable as a baseline model.              |
