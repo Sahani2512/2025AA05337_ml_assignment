@@ -1,4 +1,38 @@
-This project builds and compares six machine learning classifiers—Logistic Regression, Decision Tree, KNN, Naive Bayes, Random Forest, and XGBoost—to predict target classes from input features. Models are evaluated using standard metrics, and a Streamlit app enables interactive data upload, model selection, and result visualization.
+a. Problem Statement - The objective of this project is to predict the presence of heart disease in patients using machine learning classification techniques. Multiple supervised learning models are trained and evaluated on a publicly available heart disease dataset. The models are compared using standard evaluation metrics, and a Streamlit web application is developed to allow interactive dataset upload, model selection, and visualization of results.
+b. Dataset Description - The Heart Disease dataset was obtained from a public repository (UCI / Kaggle).
+Dataset Characteristics:
+Number of instances: 1025
+Number of features: 13 input features + 1 target variable
+Type: Binary classification (0 = No Heart Disease, 1 = Heart Disease)
+Features:
+age – Age of patient
+sex – Gender (0 = Female, 1 = Male)
+cp – Chest pain type
+trestbps – Resting blood pressure
+chol – Serum cholesterol
+fbs – Fasting blood sugar
+restecg – Resting ECG results
+thalach – Maximum heart rate achieved
+exang – Exercise induced angina
+oldpeak – ST depression
+slope – Slope of peak exercise ST segment
+ca – Number of major vessels
+thal – Thalassemia
+target – Heart disease presence (0/1)
+c. Models Used and Evaluation Metrics - The following six machine learning models were implemented:
+Logistic Regression
+Decision Tree Classifier
+K-Nearest Neighbors (KNN)
+Naive Bayes (Gaussian)
+Random Forest (Ensemble)
+XGBoost (Ensemble)
+Each model was evaluated using:
+Accuracy
+AUC Score
+Precision
+Recall
+F1 Score
+Matthews Correlation Coefficient (MCC)
 | Model               | Accuracy | AUC    | Precision | Recall | F1     | MCC    |
 | ------------------- | -------- | ------ | --------- | ------ | ------ | ------ |
 | Logistic Regression | 0.8488   | 0.9171 | 0.8306    | 0.9115 | 0.8692 | 0.6951 |
@@ -7,12 +41,12 @@ This project builds and compares six machine learning classifiers—Logistic Reg
 | Naive Bayes         | 0.8488   | 0.9060 | 0.8475    | 0.8850 | 0.8658 | 0.6937 |
 | Random Forest       | 0.9512   | 0.9902 | 0.9558    | 0.9558 | 0.9558 | 0.9014 |
 | XGBoost             | 0.9415   | 0.9834 | 0.9316    | 0.9646 | 0.9478 | 0.8819 |
+| ML Model                 | Observation                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Logistic Regression      | Provides stable performance with good recall and balanced metrics, suitable as a baseline model.              |
+| Decision Tree            | Achieves strong accuracy but shows tendency toward overfitting due to model complexity.                       |
+| KNN                      | Performance depends on feature scaling and choice of K; slightly lower accuracy compared to ensemble methods. |
+| Naive Bayes              | Fast and simple model but assumes feature independence, leading to slightly reduced performance.              |
+| Random Forest (Ensemble) | Achieves the highest accuracy and MCC, showing excellent generalization due to ensemble averaging.            |
+| XGBoost (Ensemble)       | Provides near-optimal performance with high AUC and F1 score, demonstrating powerful boosting capability.     |
 
-| ML Model | Observation about Model Performance |
-|---------|-----------------------------------|
-| Logistic Regression | Provided baseline performance with good recall but comparatively lower accuracy than ensemble models. |
-| Decision Tree | Achieved high recall but showed signs of overfitting due to its simple tree structure. |
-| KNN | Delivered moderate accuracy and was sensitive to feature scaling and data distribution. |
-| Naive Bayes | Produced consistent results but lower accuracy due to its strong independence assumptions. |
-| Random Forest | Achieved the best overall performance with high accuracy and MCC by combining multiple decision trees. |
-| XGBoost | Demonstrated strong generalization with high accuracy and AUC, performing close to Random Forest. |
