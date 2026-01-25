@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import joblib
 import os
-import numpy as np
+
+from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, matthews_corrcoef, confusion_matrix, classification_report
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-st.set_page_config(page_title="Heart Disease Prediction", layout="centered")
-
+st.set_page_config(page_title="Heart Disease Prediction", layout="wide")
 st.title("Heart Disease Prediction using Machine Learning")
 
 # Load scaler and models
@@ -22,36 +23,74 @@ models = {
     "XGBoost": joblib.load(os.path.join(BASE_DIR, "model", "xgboost.pkl")),
 }
 
-st.sidebar.header("Input Patient Data")
+st.sidebar.header("Upload Test Dataset (CSV)")
+uploaded_file = st.sidebar.file_uploader("Upload CSV (target column must be last)", type=["csv"])
 
-age = st.sidebar.number_input("Age", 20, 100, 50)
-sex = st.sidebar.selectbox("Sex (0=Female,1=Male)", [0, 1])
-cp = st.sidebar.number_input("Chest Pain Type", 0, 3, 1)
-trestbps = st.sidebar.number_input("Resting BP", 80, 200, 120)
-chol = st.sidebar.number_input("Cholesterol", 100, 400, 200)
-fbs = st.sidebar.selectbox("Fasting Blood Sugar >120 (0/1)", [0, 1])
-restecg = st.sidebar.number_input("Rest ECG", 0, 2, 1)
-thalach = st.sidebar.number_input("Max Heart Rate", 60, 220, 150)
-exang = st.sidebar.selectbox("Exercise Induced Angina (0/1)", [0, 1])
-oldpeak = st.sidebar.number_input("Oldpeak", 0.0, 6.0, 1.0)
-slope = st.sidebar.number_input("Slope", 0, 2, 1)
-ca = st.sidebar.number_input("CA", 0, 4, 0)
-thal = st.sidebar.number_input("Thal", 0, 3, 2)
+model_choice = st.sidebar.selectbox("Select Model", list(models.keys()))
 
-model_choice = st.selectbox("Choose Model", list(models.keys()))
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
 
-input_data = np.array([[age, sex, cp, trestbps, chol, fbs, restecg,
-                        thalach, exang, oldpeak, slope, ca, thal]])
+    st.subheader("Uploaded Dataset Preview")
+    st.dataframe(df.head())
 
-input_scaled = scaler.transform(input_data)
+    # Rename columns to match training
+    df = df.rename(columns={
+        "cp": "chest_pain",
+        "chol": "cholesterol",
+        "restecg": "ecg",
+        "exang": "exercise_angina",
+        "fbs": "fast_sugar",
+        "trestbps": "rest_bp",
+        "thalach": "max_hr",
+        "ca": "vessels"
+    })
 
-if st.button("Predict"):
+    # Features and target (assume target is last column)
+    X = df.iloc[:, :-1]
+    y = df.iloc[:, -1]
+
+    X_scaled = scaler.transform(X)
+
     model = models[model_choice]
 
-    prediction = model.predict(input_scaled)[0]
-    prob = model.predict_proba(input_scaled)[0][1]
+    y_pred = model.predict(X_scaled)
+    y_prob = model.predict_proba(X_scaled)[:, 1]
 
-    if prediction == 0:
-        st.error(f"Heart Disease Detected (Probability: {1-prob:.2f})")
-    else:
-        st.success(f"No Heart Disease Detected (Probability: {prob:.2f})")
+    # Metrics
+    acc = accuracy_score(y, y_pred)
+    auc = roc_auc_score(y, y_prob)
+    prec = precision_score(y, y_pred)
+    rec = recall_score(y, y_pred)
+    f1 = f1_score(y, y_pred)
+    mcc = matthews_corrcoef(y, y_pred)
+
+    st.subheader("Evaluation Metrics")
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Accuracy", f"{acc:.4f}")
+    col2.metric("AUC", f"{auc:.4f}")
+    col3.metric("Precision", f"{prec:.4f}")
+
+    col4, col5, col6 = st.columns(3)
+    col4.metric("Recall", f"{rec:.4f}")
+    col5.metric("F1 Score", f"{f1:.4f}")
+    col6.metric("MCC", f"{mcc:.4f}")
+
+    # Confusion Matrix
+    st.subheader("Confusion Matrix")
+    cm = confusion_matrix(y, y_pred)
+    cm_df = pd.DataFrame(cm, index=["Actual 0", "Actual 1"], columns=["Predicted 0", "Predicted 1"])
+    st.dataframe(cm_df)
+
+    # Classification Report
+    st.subheader("Classification Report")
+    report = classification_report(y, y_pred, output_dict=True)
+    report_df = pd.DataFrame(report).transpose()
+    st.dataframe(report_df)
+
+    st.success(f"Evaluation completed using {model_choice}")
+
+else:
+    st.info("Please upload a CSV file (target column must be last).")
+
