@@ -1,19 +1,30 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
 import os
 
-from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, matthews_corrcoef, confusion_matrix, classification_report
+from sklearn.metrics import (
+    accuracy_score,
+    roc_auc_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    matthews_corrcoef,
+    confusion_matrix,
+    classification_report
+)
 
+# Base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Page config
 st.set_page_config(page_title="Heart Disease Prediction", layout="wide")
 st.title("Heart Disease Prediction using Machine Learning")
 
-# Load scaler and models
+# Load scaler
 scaler = joblib.load(os.path.join(BASE_DIR, "model", "scaler.pkl"))
 
+# Load models
 models = {
     "Logistic Regression": joblib.load(os.path.join(BASE_DIR, "model", "logistic_regression.pkl")),
     "Decision Tree": joblib.load(os.path.join(BASE_DIR, "model", "decision_tree.pkl")),
@@ -23,10 +34,29 @@ models = {
     "XGBoost": joblib.load(os.path.join(BASE_DIR, "model", "xgboost.pkl")),
 }
 
-st.sidebar.header("Upload Test Dataset (CSV)")
-uploaded_file = st.sidebar.file_uploader("Upload CSV (target column must be last)", type=["csv"])
+# ================= SIDEBAR =================
 
+# Download sample CSV
+st.sidebar.markdown("### Download Sample Test Data")
+with open(os.path.join(BASE_DIR, "heart_disease.csv"), "rb") as file:
+    st.sidebar.download_button(
+        label="Download Test CSV",
+        data=file,
+        file_name="heart_disease.csv",
+        mime="text/csv"
+    )
+
+# Upload CSV
+st.sidebar.markdown("### Upload Test Dataset")
+uploaded_file = st.sidebar.file_uploader(
+    "Upload CSV (target column must be last)",
+    type=["csv"]
+)
+
+# Model selection
 model_choice = st.sidebar.selectbox("Select Model", list(models.keys()))
+
+# ================= MAIN APP =================
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
@@ -46,14 +76,15 @@ if uploaded_file is not None:
         "ca": "vessels"
     })
 
-    # Features and target (assume target is last column)
+    # Split features and target
     X = df.iloc[:, :-1]
     y = df.iloc[:, -1]
 
+    # Scale features
     X_scaled = scaler.transform(X)
 
+    # Model prediction
     model = models[model_choice]
-
     y_pred = model.predict(X_scaled)
     y_prob = model.predict_proba(X_scaled)[:, 1]
 
@@ -80,7 +111,11 @@ if uploaded_file is not None:
     # Confusion Matrix
     st.subheader("Confusion Matrix")
     cm = confusion_matrix(y, y_pred)
-    cm_df = pd.DataFrame(cm, index=["Actual 0", "Actual 1"], columns=["Predicted 0", "Predicted 1"])
+    cm_df = pd.DataFrame(
+        cm,
+        index=["Actual 0", "Actual 1"],
+        columns=["Predicted 0", "Predicted 1"]
+    )
     st.dataframe(cm_df)
 
     # Classification Report
@@ -92,5 +127,4 @@ if uploaded_file is not None:
     st.success(f"Evaluation completed using {model_choice}")
 
 else:
-    st.info("Please upload a CSV file (target column must be last).")
-
+    st.info("Please download the sample CSV or upload your own test dataset to begin.")
